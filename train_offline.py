@@ -14,12 +14,23 @@ import time
 from tqdm import trange
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def snapshot_src(src, target, exclude_from):
+    """
+    将源目录复制到目标目录，并根据排除文件排除特定文件或目录。
+
+    参数:
+    src (str): 源目录路径。
+    target (str): 目标目录路径。
+    exclude_from (str): 包含排除规则的文件路径。
+
+    功能:
+    1. 尝试创建目标目录，如果目录已存在则忽略错误。
+    2. 使用 rsync 命令进行递归复制，并排除指定文件或目录。
+    """
     try:
         os.mkdir(target)
     except OSError:
         pass
     os.system(f"rsync -rv --exclude-from={exclude_from} {src} {target}")
-    
 def eval_policy(policy, env_name, seed, mean, std, seed_offset=100, eval_episodes=10):
 	eval_env = gym.make(env_name)
 	eval_env.seed(seed + seed_offset)
